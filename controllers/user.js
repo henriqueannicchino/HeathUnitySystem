@@ -4,22 +4,26 @@ import jwt from 'jsonwebtoken';
 import User from '../models/user.js';
 
 export const signin = async(req, res) => {
-    const { email, password } = req.body;
+    const { userName, password } = req.body;
 
     try{
-        const existingUser = await User.findOne({ email });
+        const existingUser = await User.findOne({ userName });
 
-        if(!existingUser) return res.status(404).json({ message: "User doesn't exist. "});
+        if(!existingUser){ 
+            return res.status(404).json({ message: "Usuário não existe. "});
+        } else if(existingUser.status==="disabled" || existingUser.status==="pending" || existingUser.status==="rejected") {
+            return res.status(511).json({ message: "Usuário não possui permissão para logar "});
+        };
 
         const isPasswordCorrect = await bcrypt.compare(password, existingUser.password);
         
-        if(!isPasswordCorrect) return res.status(400).json({ message: "Invalid credentials." });
+        if(!isPasswordCorrect) return res.status(400).json({ message: "Credenciais invalidas." });
 
-        const token = jwt.sign({ email: existingUser.email, id: existingUser._id }, process.env.KEY, {expiresIn: "2h"});
+        const token = jwt.sign({ name: existingUser.name, userName: existingUser.userName, type: existingUser.type, id: existingUser._id }, process.env.KEY, {expiresIn: "2h"});
 
         res.status(200).json({ result: existingUser, token });
     } catch (error) {
-        res.status(500).json({ message: 'Something went wrong.' });
+        res.status(500).json({ message: 'Algo deu errado.' });
     }
 }
 
@@ -30,15 +34,15 @@ export const createUser = async(req, res) => {
         
         const existingUser = await User.findOne({ userName });
 
-        if(existingUser) return res.status(400).json({ message: "User already exist. "});
+        if(existingUser) return res.status(400).json({ message: "Usuário já existe. "});
 
         const hashedPassword = await bcrypt.hash(password, 11);
 
-        const result = await User.create({ name, userName, password: hashedPassword, type});
+        await User.create({ name, userName, password: hashedPassword, type});
 
-        res.status(200).json({ message: "user created", result});
+        res.status(200).json({ message: "usuário criado"});
     } catch (error){
-        res.status(500).json({ message: 'Something went wrong.' });
+        res.status(500).json({ message: 'Algo deu errado.' });
     }
 }
 
@@ -47,9 +51,9 @@ export const consultUser = async(req, res) => {
 
     try{
         const user = await User.findById(id).select('');
-        console.log(user);
+        //console.log(user);
         res.status(200).json({ typeUser: user.typeUser, whatsApp: user.whatsApp});
     } catch (error) {
-        res.status(500).json({ message: 'Something went wrong.' });
+        res.status(500).json({ message: 'Algo deu errado.' });
     }
 }
