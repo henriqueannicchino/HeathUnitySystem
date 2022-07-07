@@ -11,8 +11,10 @@ export const signin = async(req, res) => {
 
         if(!existingUser){ 
             return res.status(404).json({ message: "Usuário não existe. "});
-        } else if(existingUser.status==="disabled" || existingUser.status==="pending" || existingUser.status==="rejected") {
-            return res.status(511).json({ message: "Usuário não possui permissão para logar "});
+        } else if(existingUser.status!=="approved") {
+            if(existingUser.type!=="adm"){
+                return res.status(511).json({ message: "Usuário não possui permissão para logar "});
+            }
         };
 
         const isPasswordCorrect = await bcrypt.compare(password, existingUser.password);
@@ -42,6 +44,16 @@ export const createUser = async(req, res) => {
 
         res.status(200).json({ message: "usuário criado"});
     } catch (error){
+        res.status(500).json({ message: 'Algo deu errado.' });
+    }
+}
+
+export const getAllUsers = async(req, res) => {
+
+    try{
+        const users = await User.find().select('_id name userName type status profileImage createdAt');
+        res.status(200).json(users);
+    } catch (error) {
         res.status(500).json({ message: 'Algo deu errado.' });
     }
 }
