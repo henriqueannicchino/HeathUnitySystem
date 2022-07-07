@@ -26,7 +26,7 @@ export const signin = async(req, res) => {
         res.status(200).json({ result: existingUser, token });
     } catch (error) {
         res.status(500).json({ message: 'Algo deu errado.' });
-    }
+    } 
 }
 
 export const createUser = async(req, res) => {
@@ -41,6 +41,25 @@ export const createUser = async(req, res) => {
         const hashedPassword = await bcrypt.hash(password, 11);
 
         await User.create({ name, userName, password: hashedPassword, type});
+
+        res.status(200).json({ message: "usuário criado"});
+    } catch (error){
+        res.status(500).json({ message: 'Algo deu errado.' });
+    }
+}
+
+export const createUserByAdm = async(req, res) => {
+    const { name, userName, password, type, status } = req.body;
+
+    try{
+        
+        const existingUser = await User.findOne({ userName });
+
+        if(existingUser) return res.status(400).json({ message: "Usuário já existe. "});
+
+        const hashedPassword = await bcrypt.hash(password, 11);
+
+        await User.create({ name, userName, password: hashedPassword, type, status});
 
         res.status(200).json({ message: "usuário criado"});
     } catch (error){
@@ -65,6 +84,24 @@ export const consultUser = async(req, res) => {
         const user = await User.findById(id).select('');
         //console.log(user);
         res.status(200).json({ typeUser: user.typeUser, whatsApp: user.whatsApp});
+    } catch (error) {
+        res.status(500).json({ message: 'Algo deu errado.' });
+    }
+}
+
+export const updateUser = async(req, res) => {
+    const { id } = req.params;
+    const updateOps = {};
+
+    for(const ops of req.body){
+        updateOps[ops.propName] = ops.value;
+    }
+    
+    try{
+
+        const user = await User.updateOne({_id: id }, {$set: updateOps});
+        
+        res.status(200).json({ message: 'Usuário atualizado' });
     } catch (error) {
         res.status(500).json({ message: 'Algo deu errado.' });
     }

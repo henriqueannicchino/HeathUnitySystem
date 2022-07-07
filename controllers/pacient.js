@@ -15,7 +15,6 @@ export const createPacient = async(req, res) => {
     }
 }
 
-//62c43ffd7fa69862e7e1c869
 export const consultPacient = async(req, res) => {
     const { id } = req.params;
 
