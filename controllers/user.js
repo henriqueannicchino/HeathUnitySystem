@@ -99,7 +99,7 @@ export const updateUser = async(req, res) => {
     
     try{
 
-        const user = await User.updateOne({_id: id }, {$set: updateOps});
+        await User.updateOne({_id: id }, {$set: updateOps});
         
         res.status(200).json({ message: 'Usuário atualizado' });
     } catch (error) {
