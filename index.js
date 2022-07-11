@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 
 import userRoutes from './routes/users.js';
 import pacientRoutes from './routes/pacients.js';
+import schedules from './routes/schedules.js';
 
 const app = express();
 dotenv.config();
@@ -16,6 +17,7 @@ app.use(cors());
 
 app.use('/user', userRoutes);
 app.use('/pacient', pacientRoutes);
+app.use('/schedule', schedules);
 
 const PORT = process.env.PORT || 5000;
 

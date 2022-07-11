@@ -9,6 +9,6 @@ router.post('/createUserByAdm', auth, createUserByAdm);
 router.post('/createUser', createUser);
 router.get('/getAllUsers', auth, getAllUsers);
 router.patch('/updateUser/:id', auth, updateUser);
-router.post('/consultUser/:id', consultUser);
+router.post('/consultUser/:id', auth, consultUser);
 
 export default router;

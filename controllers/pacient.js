@@ -5,10 +5,10 @@ export const createPacient = async(req, res) => {
     const newPacient = req.body;
 
     try{
+        
+        await Pacient.create(newPacient);
 
-        const createdPacient = await Pacient.create(newPacient);
-
-        res.status(200).json({ message: "Paciente criado",createdPacient: createdPacient});
+        res.status(200).json({ message: "Paciente criado"});
     } catch (error){
 
         res.status(500).json({ message: 'Algo deu errado.' });

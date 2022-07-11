@@ -83,7 +83,11 @@ export const consultUser = async(req, res) => {
     try{
         const user = await User.findById(id).select('');
         //console.log(user);
-        res.status(200).json({ typeUser: user.typeUser, whatsApp: user.whatsApp});
+        res.status(200).json({ 
+            id: user._id, name: user.name, userName: user.userName, 
+            type: user.type, status: user.status, profileImage: user.profileImage, 
+            createdAt: user.createdAt 
+        });
     } catch (error) {
         res.status(500).json({ message: 'Algo deu errado.' });
     }
