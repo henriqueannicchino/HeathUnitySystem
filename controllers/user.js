@@ -98,7 +98,12 @@ export const updateUser = async(req, res) => {
     const updateOps = {};
 
     for(const ops of req.body){
-        updateOps[ops.propName] = ops.value;
+        if(ops.propName==="password") {
+            updateOps[ops.propName] = await bcrypt.hash(ops.value, 11);
+        }
+        else {
+            updateOps[ops.propName] = ops.value;
+        }
     }
     
     try{
