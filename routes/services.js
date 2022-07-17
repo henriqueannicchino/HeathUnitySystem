@@ -4,6 +4,6 @@ import { createDoc } from '../services/createdoc.js';
 
 const router = express.Router();
 
-router.get('/createdoc', createDoc)
+router.post('/createdoc', createDoc)
  
 export default router;
