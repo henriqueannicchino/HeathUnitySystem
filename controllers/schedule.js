@@ -60,3 +60,42 @@ export const updateSchedule = async(req, res) => {
         res.status(500).json({ message: 'Algo deu errado.' });
     }
 }
+
+export const getReportSchedule = async(req, res) => {
+
+    try{
+        
+        let schedulesTotal = 0, schedulesDentist = 0, schedulesDoctor = 0, schedulesNurse = 0;
+        let schedulePhysiotherapist = 0, schedulePsychologist = 0;
+
+        const schedules = await Schedule.find({present: true}).select('_id scheduleDate time present createdAt')
+            .populate({path:"userId", select:['type']});
+
+        schedulesTotal = schedules.length;
+        await schedules.map(schedule => {
+            if(schedule.userId.type==="Dentista")
+                schedulesDentist++;
+            else if(schedule.userId.type==="Enfermeiro(a)")
+                schedulesNurse++;
+            else if(schedule.userId.type==="Fisioterapeuta")
+                schedulePhysiotherapist++;
+            else if(schedule.userId.type==="Médico(a)")
+                schedulesDoctor++;
+            else if(schedule.userId.type==="Psicólogo(a)")
+                schedulePsychologist++;
+        });
+
+        res.status(200).json({
+            Total: schedulesTotal, 
+            Dentist: schedulesDentist,
+            Nurse: schedulesNurse,
+            Physiotherapist: schedulePhysiotherapist,
+            Doctor: schedulesDoctor,
+            Psychologist: schedulePsychologist
+        });       
+        
+
+    } catch (error) {
+        res.status(500).json({ message: 'Algo deu errado.' });
+    }
+}
