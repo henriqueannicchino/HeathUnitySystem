@@ -16,8 +16,8 @@ const {
 } = docx;
 
 const anoAtual = new Date().getFullYear();
-const periodoInicial = "setembro" 
-const periodoFinal = "outubro"
+const periodoInicial = "janeiro" 
+const periodoFinal = "dezembro"
 
 export const createDoc = (req, res) => {
 
