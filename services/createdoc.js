@@ -16,6 +16,8 @@ const {
 } = docx;
 
 const anoAtual = new Date().getFullYear();
+const periodoInicial = "setembro" 
+const periodoFinal = "outubro"
 
 export const createDoc = (req, res) => {
 
@@ -141,7 +143,7 @@ export const createDoc = (req, res) => {
             children: [
               new TextRun({
                 text: `No ano de ${anoAtual}, o SIASS realizou ${siassQtd} atendimentos em perícias médicas, sendo
-                elas, presencial e documental.`,
+                elas, presencial e documental. Considerando o período de funcionamento de ${periodoInicial} e ${periodoFinal} de ${anoAtual}`,
                 font: "Times New Roman",
                 size: 24,
               }),
@@ -165,7 +167,7 @@ export const createDoc = (req, res) => {
             children: [
               new TextRun({
                 text: `Os atendimentos nas especialidades de pediatria e clínica geral, totalizam ${servicoMedicoQtd}
-                        atendimentos. Considerando o período de funcionamento de setembro e outubro de ${anoAtual}`,
+                        atendimentos. Considerando o período de funcionamento de ${periodoInicial} e ${periodoFinal} de ${anoAtual}`,
                 font: "Times New Roman",
                 size: 24,
               }),
@@ -189,7 +191,7 @@ export const createDoc = (req, res) => {
             children: [
               new TextRun({
                 text: `Foram realizadas ${servicoFisioterapiaQtd} consultas de fisioterapia, considerando o período de
-                  funcionamento de setembro e outubro de ${anoAtual}.`,
+                  funcionamento de ${periodoInicial} e ${periodoFinal} de ${anoAtual}.`,
                 font: "Times New Roman",
                 size: 24,
               }),
@@ -213,7 +215,7 @@ export const createDoc = (req, res) => {
             children: [
               new TextRun({
                 text: `Foram realizadas ${servicoEnfermagemQtd} triagens pela enfermagem, considerando o período de
-                  funcionamento de setembro e outubro de ${anoAtual}.`,
+                  funcionamento de ${periodoInicial} e ${periodoFinal} de ${anoAtual}.`,
                 font: "Times New Roman",
                 size: 24,
               }),
@@ -236,7 +238,8 @@ export const createDoc = (req, res) => {
           new Paragraph({
             children: [
               new TextRun({
-                text: `Foram realizados ${servicoOdontoQtd} atendimentos em Odontologia.`,
+                text: `Foram realizados ${servicoOdontoQtd} atendimentos em Odontologia, considerando o período de
+                funcionamento de ${periodoInicial} e ${periodoFinal} de ${anoAtual}.`,
                 font: "Times New Roman",
                 size: 24,
               }),
@@ -259,8 +262,8 @@ export const createDoc = (req, res) => {
             children: [
               new TextRun({
                 text: `O serviço de psicologia é integrado por diversas possibilidades de atuação e
-                  atividades. No ano de ${anoAtual} foram realizados ${servicoPsicologiaQtd} atendimentos direto com usuário, além de
-                  ações institucionais.`,
+                  atividades. No ano de ${anoAtual} foram realizados ${servicoPsicologiaQtd} atendimentos direto com usuário, considerando o período de
+                  funcionamento de ${periodoInicial} e ${periodoFinal} de ${anoAtual}, além de ações institucionais.`,
                 font: "Times New Roman",
                 size: 24,
               }),
