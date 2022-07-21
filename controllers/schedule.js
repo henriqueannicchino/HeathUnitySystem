@@ -23,14 +23,14 @@ export const getAllSchedulesDay = async(req, res) => {
         const user = await User.findById(id).select('type');
 
         if(user.type!=="adm"){
-            const schedules = await Schedule.find({scheduleDate: currentDate, userId: id}).select('_id scheduleDate time present createdAt')
+            const schedules = await Schedule.find({scheduleDate: {$gte: currentDate, $lte: currentDate}, userId: id}).select('_id scheduleDate time present createdAt')
             .populate({path:"userId", select:['name']})
             .populate({path:"pacientId", select:['name']});
 
             res.status(200).json(schedules);
         }
         else {
-            const schedules = await Schedule.find({scheduleDate: currentDate}).select('_id scheduleDate time present createdAt')
+            const schedules = await Schedule.find({scheduleDate: {$gte: currentDate, $lte: currentDate}}).select('_id scheduleDate time present createdAt')
             .populate({path:"userId", select:['name']})
             .populate({path:"pacientId", select:['name']});
 
@@ -63,12 +63,14 @@ export const updateSchedule = async(req, res) => {
 
 export const getReportSchedule = async(req, res) => {
 
+    const {year} = req.body;
+
     try{
         
         let schedulesTotal = 0, schedulesDentist = 0, schedulesDoctor = 0, schedulesNurse = 0;
         let schedulePhysiotherapist = 0, schedulePsychologist = 0;
 
-        const schedules = await Schedule.find({present: true}).select('_id scheduleDate time present createdAt')
+        const schedules = await Schedule.find({scheduleDate: {$gte: `${year}-01-01`, $lte: `${year}-12-31`}, present: true}).select('_id scheduleDate time present createdAt')
             .populate({path:"userId", select:['type']});
 
         schedulesTotal = schedules.length;

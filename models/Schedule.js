@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 const scheduleSchema = mongoose.Schema({
     userId: {type: mongoose.Schema.Types.ObjectId, ref: "User", required: true},
     pacientId: {type: mongoose.Schema.Types.ObjectId, ref: "Pacient", required: true},
-    scheduleDate: {type: String, required: true},
+    scheduleDate: {type: Date, required: true},
     time: {type: String, required: true},
     present: {type: Boolean, default: false},
     updatedAt: {type: Date, default: Date.now },
