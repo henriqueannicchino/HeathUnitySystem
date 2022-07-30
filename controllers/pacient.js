@@ -1,14 +1,24 @@
 import Pacient from '../models/Pacient.js';
+import jwt from 'jsonwebtoken';
 
 
 export const createPacient = async(req, res) => {
     const newPacient = req.body;
+    let decodedData = req.headers.authorization.split(" ")[1];
+    if(decodedData !== undefined){
+        decodedData = jwt.decode(decodedData);
+    }
 
     try{
         
-        await Pacient.create(newPacient);
+        if(decodedData.type === "adm"){
+            await Pacient.create(newPacient);
+            res.status(200).json({ message: "Paciente criado"});
+        }
+        else {
+            res.status(511).json({ message: 'Permissões insulficientes ou Sessão expirou'});
+        }
 
-        res.status(200).json({ message: "Paciente criado"});
     } catch (error){
 
         res.status(500).json({ message: 'Algo deu errado.' });
@@ -39,6 +49,13 @@ export const consultPacient = async(req, res) => {
 
 export const updatePacient = async(req, res) => {
     const { id } = req.params;
+
+    const newPacient = req.body;
+    let decodedData = req.headers.authorization.split(" ")[1];
+    if(decodedData !== undefined){
+        decodedData = jwt.decode(decodedData);
+    }
+
     const updateOps = {};
 
     for(const ops of req.body){
@@ -47,9 +64,14 @@ export const updatePacient = async(req, res) => {
     
     try{
 
-        await Pacient.updateOne({_id: id }, {$set: updateOps});
+        if(decodedData.type === "adm"){
+            await Pacient.updateOne({_id: id }, {$set: updateOps});
+            res.status(200).json({ message: 'Paciente atualizado' });
+        }
+        else {
+            res.status(511).json({ message: 'Permissões insulficientes ou Sessão expirou'});
+        }
         
-        res.status(200).json({ message: 'Paciente atualizado' });
     } catch (error) {
         res.status(500).json({ message: 'Algo deu errado.' });
     }

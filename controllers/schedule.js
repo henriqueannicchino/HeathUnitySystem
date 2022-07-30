@@ -1,14 +1,25 @@
 import Schedule from '../models/Schedule.js';
 import User from '../models/user.js';
+import jwt from 'jsonwebtoken';
 
 export const createSchedule = async(req, res) => {
     const newSchedule = req.body;
 
+    let decodedData = req.headers.authorization.split(" ")[1];
+    if(decodedData !== undefined){
+        decodedData = jwt.decode(decodedData);
+    }
+
     try{
 
-        await Schedule.create(newSchedule);
+        if(decodedData.type === "adm"){
+            await Schedule.create(newSchedule);
+            res.status(200).json({ message: "Agendamento criado"});
+        }
+        else {
+            res.status(511).json({ message: 'Permissões insulficientes ou Sessão expirou'});
+        }
 
-        res.status(200).json({ message: "Agendamento criado"});
     } catch (error){
 
         res.status(500).json({ message: 'Algo deu errado.' });
@@ -42,9 +53,31 @@ export const getAllSchedulesDay = async(req, res) => {
     }
 }
 
+export const getAllPacientSchedules = async(req, res) => {
+    const { id } = req.params;
+
+    try{
+
+        const schedules = await Schedule.find({pacientId: id}).select('_id scheduleDate time createdAt')
+        .populate({path:"userId", select:['name']})
+
+        res.status(200).json(schedules);
+        
+
+    } catch (error) {
+        res.status(500).json({ message: 'Algo deu errado.' });
+    }
+}
+
 
 export const updateSchedule = async(req, res) => {
     const { id } = req.params;
+
+    let decodedData = req.headers.authorization.split(" ")[1];
+    if(decodedData !== undefined){
+        decodedData = jwt.decode(decodedData);
+    }
+
     const updateOps = {};
 
     for(const ops of req.body){
@@ -52,10 +85,14 @@ export const updateSchedule = async(req, res) => {
     }
     
     try{
-
-        await Schedule.updateOne({_id: id }, {$set: updateOps});
         
-        res.status(200).json({ message: 'Agendamento atualizado' });
+        if(decodedData.type === "adm"){
+            await Schedule.updateOne({_id: id }, {$set: updateOps});
+            res.status(200).json({ message: 'Agendamento atualizado' });
+        }
+        else {
+            res.status(511).json({ message: 'Permissões insulficientes ou Sessão expirou'});
+        }
     } catch (error) {
         res.status(500).json({ message: 'Algo deu errado.' });
     }

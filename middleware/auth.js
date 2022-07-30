@@ -19,7 +19,7 @@ const auth = async (req, res, next) => {
 
         next();
     } catch (error){
-        res.status(500).json({ message: 'Token inválido.' });
+        res.status(511).json({ message: 'Token inválido.' });
     }
 }
 
