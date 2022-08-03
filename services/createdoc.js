@@ -15,13 +15,14 @@ const {
   AlignmentType,
 } = docx;
 
-const anoAtual = new Date().getFullYear();
 const periodoInicial = "janeiro";
 const periodoFinal = "dezembro";
 
-export const createDoc = (req, res) => {
+export const createDoc = async(req, res) => {
   const { Total, Dentist, Doctor, Nurse, Physiotherapist, Psychologist } =
     req.body.reportData;
+
+  const anoAtual = req.body.year;
 
   const siassQtd = Total;
   const servicoMedicoQtd = Doctor;
@@ -30,7 +31,7 @@ export const createDoc = (req, res) => {
   const servicoFisioterapiaQtd = Physiotherapist;
   const servicoPsicologiaQtd = Psychologist;
 
-  const doc = new Document({
+  const doc = await new Document({
     sections: [
       {
         headers: {
@@ -294,5 +295,8 @@ export const createDoc = (req, res) => {
   Packer.toBuffer(doc).then((buffer) => {
     fs.writeFileSync("./relatorio.docx", buffer);
   });
-  res.sendFile("./relatorio.docx", { root: "./" });
+  
+  setTimeout(function() {
+    res.sendFile("./relatorio.docx", { root: "./" });
+  }, 2000);
 };
