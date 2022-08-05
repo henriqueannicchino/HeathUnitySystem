@@ -30,8 +30,8 @@ export const signin = async(req, res) => {
 }
 
 export const createUser = async(req, res) => {
-    const { name, userName, password, type } = req.body;
-
+    const { name, userName, intern, password, type } = req.body;
+    console.log(req.body);
     try{
         
         const existingUser = await User.findOne({ userName });
@@ -40,7 +40,7 @@ export const createUser = async(req, res) => {
 
         const hashedPassword = await bcrypt.hash(password, 11);
 
-        await User.create({ name, userName, password: hashedPassword, type});
+        await User.create({ name, intern, userName, password: hashedPassword, type});
 
         res.status(200).json({ message: "usuário criado"});
     } catch (error){
@@ -78,20 +78,10 @@ export const createUserByAdm = async(req, res) => {
 }
 
 export const getAllUsers = async(req, res) => {
-    let decodedData = req.headers.authorization.split(" ")[1];
-    if(decodedData !== undefined){
-        decodedData = jwt.decode(decodedData);
-    }
 
     try{
-
-        if(decodedData.type === "adm"){
-            const users = await User.find().select('_id name userName type status profileImage createdAt');
-            res.status(200).json(users);
-        }
-        else {
-            res.status(511).json({ message: 'Permissões insulficientes ou Sessão expirou'});
-        }
+        const users = await User.find().select('_id name userName type status profileImage createdAt');
+        res.status(200).json(users);
 
     } catch (error) {
         res.status(500).json({ message: 'Algo deu errado.' });
